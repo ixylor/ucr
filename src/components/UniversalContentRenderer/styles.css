@@ -1,0 +1,406 @@
+/*
+ * Every colour is a variable with a theme-neutral default derived from the
+ * surrounding text colour, so the renderer inherits the host application's
+ * theme instead of imposing one. Consumers override any of these on
+ * .universal-content-renderer or an ancestor.
+ */
+.universal-content-renderer {
+  --ucr-border: color-mix(in srgb, currentColor 18%, transparent);
+  --ucr-surface: color-mix(in srgb, currentColor 5%, transparent);
+  --ucr-muted: color-mix(in srgb, currentColor 65%, transparent);
+  --ucr-error-color: #c5303a;
+  --ucr-error-surface: color-mix(in srgb, #c5303a 10%, transparent);
+  --ucr-radius: 8px;
+  --ucr-space: 1rem;
+
+  width: 100%;
+  max-width: 100%;
+  line-height: 1.65;
+  overflow-wrap: break-word;
+}
+
+@media (prefers-color-scheme: dark) {
+  .universal-content-renderer {
+    --ucr-error-color: #ff8a8a;
+    --ucr-error-surface: color-mix(in srgb, #ff8a8a 12%, transparent);
+  }
+}
+
+.universal-content-renderer > :first-child {
+  margin-block-start: 0;
+}
+
+.universal-content-renderer > :last-child {
+  margin-block-end: 0;
+}
+
+.universal-content-renderer h1,
+.universal-content-renderer h2,
+.universal-content-renderer h3,
+.universal-content-renderer h4,
+.universal-content-renderer h5,
+.universal-content-renderer h6 {
+  margin-block: 1.6em 0.6em;
+  line-height: 1.25;
+}
+
+.universal-content-renderer p,
+.universal-content-renderer ul,
+.universal-content-renderer ol,
+.universal-content-renderer blockquote,
+.universal-content-renderer figure,
+.universal-content-renderer pre {
+  margin-block: 0 var(--ucr-space);
+}
+
+.universal-content-renderer ul,
+.universal-content-renderer ol {
+  padding-inline-start: 1.5em;
+}
+
+.universal-content-renderer li + li {
+  margin-block-start: 0.25em;
+}
+
+.universal-content-renderer blockquote {
+  margin-inline: 0;
+  padding: 0.25rem 0 0.25rem 1rem;
+  border-inline-start: 3px solid var(--ucr-border);
+  color: var(--ucr-muted);
+}
+
+.universal-content-renderer hr {
+  margin-block: 2rem;
+  border: 0;
+  border-block-start: 1px solid var(--ucr-border);
+}
+
+.universal-content-renderer a {
+  color: inherit;
+  text-underline-offset: 0.15em;
+}
+
+.universal-content-renderer :focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.ucr-blocked-link {
+  text-decoration: line-through;
+  color: var(--ucr-muted);
+}
+
+/* Tables ------------------------------------------------------------------ */
+
+.ucr-table-scroll {
+  margin-block-end: var(--ucr-space);
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.ucr-table-scroll table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.ucr-table-scroll th,
+.ucr-table-scroll td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--ucr-border);
+  text-align: start;
+}
+
+/* Code -------------------------------------------------------------------- */
+
+.ucr-inline-code {
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+  background: var(--ucr-surface);
+  font-size: 0.9em;
+}
+
+.ucr-code-block {
+  margin-block-end: var(--ucr-space);
+  border: 1px solid var(--ucr-border);
+  border-radius: var(--ucr-radius);
+  overflow: hidden;
+}
+
+.ucr-code-block__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem 0.35rem 0.75rem;
+  background: var(--ucr-surface);
+  font-size: 0.78rem;
+  color: var(--ucr-muted);
+}
+
+.ucr-code-block__lang {
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+}
+
+.ucr-code-block__copy {
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--ucr-border);
+  border-radius: 5px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.ucr-code {
+  margin: 0;
+  padding: 0.85rem;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  tab-size: 2;
+}
+
+.ucr-code code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* Media ------------------------------------------------------------------- */
+
+.ucr-figure {
+  margin-inline: 0;
+}
+
+.ucr-figure figcaption {
+  margin-block-start: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--ucr-muted);
+}
+
+.ucr-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--ucr-radius);
+}
+
+.ucr-video {
+  width: 100%;
+  max-width: 100%;
+  border-radius: var(--ucr-radius);
+  background: #000;
+}
+
+.ucr-audio {
+  width: 100%;
+}
+
+.ucr-pdf {
+  width: 100%;
+  height: min(70vh, 640px);
+  border: 1px solid var(--ucr-border);
+  border-radius: var(--ucr-radius);
+}
+
+.ucr-embed {
+  position: relative;
+  width: 100%;
+  border-radius: var(--ucr-radius);
+  overflow: hidden;
+  background: var(--ucr-surface);
+}
+
+.ucr-embed--16x9 {
+  aspect-ratio: 16 / 9;
+}
+
+.ucr-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Math and diagrams -------------------------------------------------------- */
+
+/*
+ * KaTeX defaults to 1.21em, which reads as oversized next to body copy. The
+ * vertical padding matters as much: a display block is a scroll container, so
+ * without it the tallest glyphs of a matrix or an integral are clipped.
+ */
+.universal-content-renderer .katex {
+  font-size: 1.08em;
+}
+
+.ucr-math-block,
+.universal-content-renderer .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-block: 0.6em;
+}
+
+.universal-content-renderer .katex-display {
+  margin-block: 0.4em;
+}
+
+.ucr-math-block {
+  margin-block-end: var(--ucr-space);
+  text-align: center;
+}
+
+/* Row breathing room for matrices, which KaTeX otherwise sets very tightly. */
+.universal-content-renderer .katex .mtable .vlist > span > span {
+  padding-block: 0.04em;
+}
+
+.universal-content-renderer .katex-error {
+  color: var(--ucr-error-color);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  overflow-wrap: anywhere;
+}
+
+.ucr-mermaid {
+  margin-block-end: var(--ucr-space);
+  overflow-x: auto;
+  text-align: center;
+}
+
+.ucr-mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Status ------------------------------------------------------------------ */
+
+.ucr-block-error {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-block-end: var(--ucr-space);
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--ucr-error-color);
+  border-radius: var(--ucr-radius);
+  background: var(--ucr-error-surface);
+  color: var(--ucr-error-color);
+  font-size: 0.875rem;
+}
+
+.ucr-block-error__detail {
+  color: inherit;
+  opacity: 0.85;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.ucr-block-loading {
+  display: block;
+  margin-block-end: 0.5rem;
+}
+
+.ucr-block-loading__bar {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--ucr-border);
+  overflow: hidden;
+  position: relative;
+}
+
+.ucr-block-loading__bar::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inline-size: 35%;
+  background: var(--ucr-muted);
+  animation: ucr-indeterminate 1.2s ease-in-out infinite;
+}
+
+@keyframes ucr-indeterminate {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(340%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ucr-block-loading__bar::after {
+    animation: none;
+    inline-size: 100%;
+    opacity: 0.4;
+  }
+}
+
+.ucr-streaming-block {
+  margin-block-end: var(--ucr-space);
+  border: 1px dashed var(--ucr-border);
+  border-radius: var(--ucr-radius);
+  padding: 0.5rem;
+}
+
+.ucr-streaming-block .ucr-code {
+  padding: 0.35rem 0.5rem;
+  color: var(--ucr-muted);
+}
+
+.ucr-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/*
+ * Minimal highlight.js token theme expressed in variables rather than importing
+ * one of the library's opinionated stylesheets — it keeps the bundle small and
+ * lets the same rules work in light and dark.
+ */
+.universal-content-renderer {
+  --ucr-hl-keyword: #a626a4;
+  --ucr-hl-string: #4b8b3b;
+  --ucr-hl-number: #b76b01;
+  --ucr-hl-comment: color-mix(in srgb, currentColor 55%, transparent);
+  --ucr-hl-name: #2f6ec0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .universal-content-renderer {
+    --ucr-hl-keyword: #d891f0;
+    --ucr-hl-string: #97d68b;
+    --ucr-hl-number: #f0b775;
+    --ucr-hl-name: #82b4ff;
+  }
+}
+
+.hljs-comment,
+.hljs-quote { color: var(--ucr-hl-comment); font-style: italic; }
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-doctag { color: var(--ucr-hl-keyword); }
+
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute { color: var(--ucr-hl-string); }
+
+.hljs-number,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-meta { color: var(--ucr-hl-number); }
+
+.hljs-title,
+.hljs-name,
+.hljs-section,
+.hljs-attr,
+.hljs-variable,
+.hljs-type,
+.hljs-built_in { color: var(--ucr-hl-name); }
+
+.hljs-emphasis { font-style: italic; }
+.hljs-strong { font-weight: 600; }
