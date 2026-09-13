@@ -30,6 +30,7 @@ function useCopy() {
 export function Landing() {
   const [selected, setSelected] = useState(examples[0])
   const [content, setContent] = useState(examples[0].content)
+  const [heroContent, setHeroContent] = useState(examples[0].content)
   const editorRef = useRef<HTMLTextAreaElement>(null)
   const clipboard = useCopy()
   const command = installCommand()
@@ -73,8 +74,8 @@ export function Landing() {
         </div>
 
         <LiveEditor
-          content={examples[0].content}
-          onChange={() => {}}
+          content={heroContent}
+          onChange={setHeroContent}
           autoPlay
           label="Streaming in"
         />

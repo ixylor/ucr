@@ -16,6 +16,7 @@ export default function App() {
   return (
     <div className="page">
       <header className="masthead">
+        <div className="masthead__inner">
         <a className="masthead__mark" href="#top" onClick={() => setView('home')}>
           <Logo size={26} />
           <span className="masthead__name">{brand.name}</span>
@@ -59,6 +60,7 @@ export default function App() {
             Star on GitHub
           </a>
         </nav>
+        </div>
       </header>
 
       <main id="top" className={view === 'playground' ? 'main main--full' : 'main'}>
@@ -66,6 +68,7 @@ export default function App() {
       </main>
 
       <footer className="colophon">
+        <div className="colophon__inner">
         <p>
           {brand.fullName} is MIT licensed and built on react-markdown, KaTeX and
           Mermaid. Everything on this page renders in your browser.
@@ -81,6 +84,7 @@ export default function App() {
             {brand.author.name}
           </a>
         </p>
+        </div>
       </footer>
     </div>
   )

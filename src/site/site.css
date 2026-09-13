@@ -102,13 +102,24 @@ html {
 /* Masthead ------------------------------------------------------------------ */
 
 .masthead {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  padding: 1.25rem var(--gutter);
   border-block-end: 1px solid var(--rule);
+}
+
+.masthead__inner,
+.colophon__inner {
+  width: 100%;
+  max-width: 78rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.masthead__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem 1.25rem;
+  flex-wrap: wrap;
+  padding-block: 1.1rem;
 }
 
 .masthead__mark {
@@ -232,13 +243,14 @@ html {
 }
 
 .hero__wordmark {
-  margin: 0;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 0 0 auto;
   color: var(--accent);
   font-family: var(--mono);
-  font-size: clamp(0.42rem, 1.15vw, 0.95rem);
-  line-height: 1.1;
+  font-size: clamp(0.5rem, 0.82vw, 0.82rem);
+  line-height: 1.15;
   letter-spacing: 0;
-  overflow-x: auto;
 }
 
 .hero h1 {
@@ -259,10 +271,11 @@ html {
   border: 1px solid var(--rule);
   border-radius: 4px;
   background: var(--paper-raised);
-  overflow-x: auto;
   font-family: var(--mono);
   font-size: 0.78rem;
   line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 /* Editor -------------------------------------------------------------------- */
@@ -456,10 +469,13 @@ html {
 }
 
 .colophon {
-  padding: 2rem var(--gutter) 3rem;
   border-block-start: 1px solid var(--rule);
   color: var(--ink-soft);
   font-size: 0.85rem;
+}
+
+.colophon__inner {
+  padding-block: 2rem 3rem;
 }
 
 .colophon p {
