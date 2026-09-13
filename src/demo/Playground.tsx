@@ -4,7 +4,7 @@ import {
   UniversalContentRenderer,
 } from '../components/UniversalContentRenderer'
 import { examplePrompts } from './examplePrompts'
-import { type ChatMessage, useAzureChat } from './useAzureChat'
+import { type ChatMessage, useAzureChat, usePlaygroundStatus } from './useAzureChat'
 
 function Reply({ message, streaming }: { message: ChatMessage; streaming: boolean }) {
   const [showSource, setShowSource] = useState(false)
@@ -36,8 +36,8 @@ function Reply({ message, streaming }: { message: ChatMessage; streaming: boolea
 export function Playground() {
   const [systemPrompt, setSystemPrompt] = useState(CONTENT_LANGUAGE_SPEC)
   const [input, setInput] = useState('')
-  const { messages, send, stop, reset, streaming, error, status } =
-    useAzureChat(systemPrompt)
+  const { messages, send, stop, reset, streaming, error } = useAzureChat(systemPrompt)
+  const status = usePlaygroundStatus()
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault()

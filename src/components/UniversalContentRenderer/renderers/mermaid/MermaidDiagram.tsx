@@ -24,12 +24,20 @@ export function MermaidDiagram({ value }: BlockRendererProps) {
       securityLevel: 'strict',
       theme: prefersDark ? 'dark' : 'default',
       fontFamily: 'inherit',
+      // Without this, a diagram that fails to parse has its error graphic
+      // appended to the document body, outside this component entirely.
+      suppressErrorRendering: true,
     })
 
+    // Parsing first keeps a broken diagram away from render(), which is what
+    // creates and leaves behind DOM nodes.
     mermaid
-      .render(domId, value)
-      .then(({ svg }) => {
-        if (active) setResult({ source, svg })
+      .parse(value, { suppressErrors: true })
+      .then((valid) => (valid ? mermaid.render(domId, value) : undefined))
+      .then((rendered) => {
+        if (!active) return
+        if (rendered) setResult({ source, svg: rendered.svg })
+        else setResult({ source, error: 'The diagram could not be parsed.' })
       })
       .catch((error: unknown) => {
         if (active) {

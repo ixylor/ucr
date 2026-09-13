@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "npm run registry && vite",
+    "build": "npm run registry && tsc -b && vite build",
+    "registry": "node scripts/build-registry.mjs",
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
@@ -35,5 +36,30 @@
     "typescript": "~6.0.2",
     "vite": "^8.3.0",
     "vitest": "^5.0.0"
+  },
+  "description": "A React component that renders one string as markdown, mathematics, code, diagrams and media — safely, and while it streams.",
+  "license": "MIT",
+  "author": "Vikas Patel (https://github.com/ixylor)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ixylor/ucr.git"
+  },
+  "homepage": "https://github.com/ixylor/ucr",
+  "bugs": {
+    "url": "https://github.com/ixylor/ucr/issues"
+  },
+  "keywords": [
+    "react",
+    "markdown",
+    "katex",
+    "mermaid",
+    "streaming",
+    "llm",
+    "react-markdown",
+    "renderer",
+    "shadcn"
+  ],
+  "engines": {
+    "node": ">=20"
   }
 }

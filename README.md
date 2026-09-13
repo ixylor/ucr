@@ -1,145 +1,72 @@
-# UniversalContentRenderer
+# UCR — Universal Content Renderer
 
-One React component that turns **a single string** into rendered content.
+One string in. A typeset document out.
+
+A React component for content you did not write: model output, user input,
+anything arriving a token at a time. It reads markdown, mathematics, code,
+diagrams and media from a single string and renders them safely, as the text
+arrives.
 
 ```jsx
-import { UniversalContentRenderer } from './components/UniversalContentRenderer'
+import { UniversalContentRenderer } from '@/components/universal-content-renderer'
 
-export default function Page({ content }) {
-  return <UniversalContentRenderer content={content} />
-}
+<UniversalContentRenderer content={content} />
 ```
 
-The string is GitHub Flavored Markdown extended with a small set of fenced
-blocks. The caller never picks a renderer; the component parses the string and
-dispatches each block itself.
+That is the whole API. The caller never picks a renderer.
 
-## The content language
+## Install
 
-The block vocabulary is written as an LLM prompt in
-[`contentLanguage.ts`](src/components/UniversalContentRenderer/contentLanguage.ts)
-and exported as `CONTENT_LANGUAGE_SPEC`. Put it in the system prompt of the model
-producing the stream so producer and renderer stay in step.
+Nothing is published to npm yet. The shadcn CLI copies the component into your
+project and installs its dependencies, so you own the files:
+
+```bash
+npx shadcn@latest add https://<your-deployment>/r/universal-content-renderer.json
+```
+
+Run `npx shadcn@latest init` once first if the project has no `components.json`.
+No Tailwind or design system required. To vendor it by hand, copy
+`src/components/UniversalContentRenderer` — it has no imports outside its own
+folder.
+
+The registry item is generated from the real source on every build
+(`scripts/build-registry.mjs`), so it cannot drift from what the repository
+contains.
+
+## What it renders
 
 | Syntax | Renders as |
 | ------ | ---------- |
 | Standard GFM | headings, lists, task lists, tables, quotes, links, images |
-| `$x$` / `$$…$$` | inline and display maths via KaTeX |
-| ` ```math ` | display maths as a fenced block |
-| ` ```mermaid ` | diagram (lazy-loaded) |
+| `$x$` / `$$…$$` | inline and display mathematics via KaTeX |
+| ` ```math ` | display mathematics as a fenced block |
+| ` ```mermaid ` | a diagram, loaded on demand |
 | ` ```video `, ` ```audio `, ` ```pdf `, ` ```youtube ` | media; URL on the first line, optional caption after |
 | ` ```<language> ` | highlighted code with a copy button |
 
-An unknown block type falls back to a plain code block, so the document never
-loses content.
+An unknown block type falls back to a plain code block, so no content is ever
+silently dropped.
 
-## Azure OpenAI playground
+## The content language
 
-`npm run dev` opens a playground where a model answers in the content language
-and the answer is rendered live, token by token.
-
-1. Copy `.env.example` to `.env` and fill in your Azure OpenAI resource:
-
-   ```
-   AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
-   AZURE_OPENAI_DEPLOYMENT=your-deployment-name
-   AZURE_OPENAI_API_KEY=your-key
-   AZURE_OPENAI_VERSION=2024-12-01-preview
-   ```
-
-2. `npm run dev`, then use the **Azure playground** tab.
-
-The key is read only by the Vite dev server ([`server/azureChat.ts`](server/azureChat.ts)),
-which proxies `POST /api/chat` to Azure and streams the completion back as plain
-text. The variables have no `VITE_` prefix on purpose: nothing reaches the
-browser bundle. That middleware runs under `npm run dev` and `npm run preview`
-only — a static production build has no server, so bring your own endpoint.
-
-The playground sends `CONTENT_LANGUAGE_SPEC` as the system prompt. It is editable
-in the **System prompt** panel, so you can change the language and see the effect
-on the next message; each reply also has a **Source** toggle to read the raw
-markup the model produced.
+The block vocabulary is written as an LLM system prompt in
+[`contentLanguage.ts`](src/components/UniversalContentRenderer/contentLanguage.ts),
+exported as `CONTENT_LANGUAGE_SPEC`. Give it to the model producing the stream
+and its answers arrive as documents rather than walls of text. It is the single
+source of truth: a new renderer is documented there in the same change.
 
 ## Streaming
 
-The component is built for content that arrives token by token:
+The component is built for content that arrives a token at a time:
 
 - the string is re-scanned only when it changes, not on every parent render;
-- maths delimiters models actually emit are normalised before parsing — `[…]`,
-  `(…)` and a `$…# UniversalContentRenderer
-
-One React component that turns **a single string** into rendered content.
-
-```jsx
-import { UniversalContentRenderer } from './components/UniversalContentRenderer'
-
-export default function Page({ content }) {
-  return <UniversalContentRenderer content={content} />
-}
-```
-
-The string is GitHub Flavored Markdown extended with a small set of fenced
-blocks. The caller never picks a renderer; the component parses the string and
-dispatches each block itself.
-
-## The content language
-
-The block vocabulary is written as an LLM prompt in
-[`contentLanguage.ts`](src/components/UniversalContentRenderer/contentLanguage.ts)
-and exported as `CONTENT_LANGUAGE_SPEC`. Put it in the system prompt of the model
-producing the stream so producer and renderer stay in step.
-
-| Syntax | Renders as |
-| ------ | ---------- |
-| Standard GFM | headings, lists, task lists, tables, quotes, links, images |
-| `$x$` / `$$…$$` | inline and display maths via KaTeX |
-| ` ```math ` | display maths as a fenced block |
-| ` ```mermaid ` | diagram (lazy-loaded) |
-| ` ```video `, ` ```audio `, ` ```pdf `, ` ```youtube ` | media; URL on the first line, optional caption after |
-| ` ```<language> ` | highlighted code with a copy button |
-
-An unknown block type falls back to a plain code block, so the document never
-loses content.
-
-## Azure OpenAI playground
-
-`npm run dev` opens a playground where a model answers in the content language
-and the answer is rendered live, token by token.
-
-1. Copy `.env.example` to `.env` and fill in your Azure OpenAI resource:
-
-   ```
-   AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
-   AZURE_OPENAI_DEPLOYMENT=your-deployment-name
-   AZURE_OPENAI_API_KEY=your-key
-   AZURE_OPENAI_VERSION=2024-12-01-preview
-   ```
-
-2. `npm run dev`, then use the **Azure playground** tab.
-
-The key is read only by the Vite dev server ([`server/azureChat.ts`](server/azureChat.ts)),
-which proxies `POST /api/chat` to Azure and streams the completion back as plain
-text. The variables have no `VITE_` prefix on purpose: nothing reaches the
-browser bundle. That middleware runs under `npm run dev` and `npm run preview`
-only — a static production build has no server, so bring your own endpoint.
-
-The playground sends `CONTENT_LANGUAGE_SPEC` as the system prompt. It is editable
-in the **System prompt** panel, so you can change the language and see the effect
-on the next message; each reply also has a **Source** toggle to read the raw
-markup the model produced.
-
-## Streaming
-
-The component is built for content that arrives token by token:
-
- span that runs across lines all become valid markdown maths
-  instead of leaking raw LaTeX into the page;
-- a fence that is open (still streaming) renders as a placeholder rather than
-  being handed half-finished to Mermaid or a `<video>` element;
+- the maths delimiters models actually emit — `\[…\]`, `\(…\)` and a `$…$` span
+  that runs across lines — are normalised before parsing instead of leaking into
+  the page as raw LaTeX;
+- a fence that has not closed renders as a placeholder rather than being handed
+  half-written to a diagram engine;
 - each block sits behind its own error boundary that clears when the block's
-  text changes, so a block that is briefly invalid recovers on its own.
-
-Run `npm run dev` and press **Replay as a stream** in the demo to watch it.
+  text changes, so a briefly invalid block recovers on its own.
 
 ## Security
 
@@ -148,15 +75,15 @@ Input is treated as untrusted, always:
 - raw HTML is never parsed (`rehype-raw` is deliberately not installed);
 - `rehype-sanitize` runs with a narrowed schema — `http`, `https` and `mailto`
   links only, `http(s)` media only, and a tight `className` allowlist so content
-  cannot borrow the host app's CSS classes;
-- every URL is re-validated in the renderer that uses it;
-- YouTube embeds are rebuilt from a validated video id against a fixed origin —
-  arbitrary iframes are impossible;
-- Mermaid runs with `securityLevel: 'strict'` and KaTeX with `trust` disabled.
+  cannot borrow the host application's CSS classes;
+- every URL is validated again by the renderer that uses it;
+- YouTube embeds are rebuilt from a validated video id against a fixed origin,
+  so arbitrary iframes are impossible;
+- Mermaid runs with `securityLevel: 'strict'`, KaTeX with `trust` disabled and
+  expansion limits.
 
-`npm test` server-renders a hostile document and asserts that no `javascript:` or
-`data:` URL, `<script>`, `onerror` or foreign iframe survives, alongside unit
-tests for URL validation, the registry, fence scanning and math normalisation.
+`npm test` renders a hostile document and asserts that no `javascript:` or
+`data:` URL, `<script>`, `onerror` or foreign iframe survives.
 
 ## Architecture
 
@@ -166,6 +93,7 @@ core/
   registry.ts                  type -> renderer map
   BlockDispatcher.tsx          the one place a fence becomes a component
   markdownPlugins.ts           remark/rehype pipeline + sanitize schema
+  normalizeMath.ts             delimiter rescue before parsing
   streaming.ts                 open-fence detection
   BlockErrorBoundary.tsx       per-block failure isolation
 markdown/components.tsx        element overrides (pre, img, a, table)
@@ -173,29 +101,58 @@ renderers/                     one file per content type
 utils/                         URL validation, block parsing
 ```
 
-Adding a content type means writing a renderer and registering it:
+Adding a content type is a component plus one registration:
 
 ```js
 registerRenderer('chart', ChartRenderer)
 ```
 
-The core parser is untouched. `registerRenderer` is internal for now — it is the
-seam that becomes the public plugin API when this moves into its own package.
+The parser is untouched. Nothing in the folder depends on the surrounding
+application: no design system, no routing, no state management. Colours are CSS
+variables defaulting to a mix of the inherited text colour, so the renderer
+takes light or dark mode from its host.
 
-Nothing here depends on the surrounding application: no design system, no
-routing, no state management. Colours are CSS variables defaulting to
-`color-mix` over `currentColor`, so the renderer inherits light or dark mode from
-its host.
+## Local development
+
+```bash
+npm install
+npm run dev
+```
+
+The site is the documentation: a landing page with live examples, an editor you
+can paste model output into, and a docs page that is itself one content string
+rendered by the component.
+
+### Azure OpenAI playground
+
+Optional, and local only. Copy `.env.example` to `.env` and fill in your Azure
+OpenAI resource; the playground tab then appears, serving the content language
+as the system prompt and rendering the reply as it streams.
+
+The key is read only by the Vite dev server
+([`server/azureChat.ts`](server/azureChat.ts)), which proxies `POST /api/chat`
+and streams the completion back. The variables have no `VITE_` prefix on
+purpose: nothing reaches the browser bundle, and a deployed build has no server,
+so the playground stays hidden in production.
 
 ## Scripts
 
 | Script | Purpose |
 | ------ | ------- |
-| `npm run dev` | demo with a live editor and stream replay |
-| `npm run build` | type-check and build |
-| `npm run lint` | oxlint |
+| `npm run dev` | the site, with the playground when Azure is configured |
+| `npm run build` | generate the registry, type-check and build |
 | `npm test` | run the test suite once |
 | `npm run test:watch` | run the suite in watch mode |
+| `npm run lint` | oxlint |
+| `npm run registry` | regenerate the shadcn registry item |
 
-The demo has two tabs: the Azure playground, and a sample document with a live
-editor and a stream-replay button that needs no credentials.
+## Deploying
+
+The site is a static Vite build. `vercel.json` sets the framework, the output
+directory, SPA rewrites and cache headers, so a Vercel import needs no further
+configuration. Set no environment variables: the playground is a development
+tool and stays off in production.
+
+## Licence
+
+MIT © [Vikas Patel](https://github.com/ixylor)

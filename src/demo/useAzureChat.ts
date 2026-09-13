@@ -6,9 +6,35 @@ export interface ChatMessage {
   content: string
 }
 
-interface AzureStatus {
+export interface AzureStatus {
   configured: boolean
   deployment: string | null
+}
+
+/**
+ * Whether a local Azure endpoint is reachable. The playground is a development
+ * tool: a static deployment has no server, so this resolves to unconfigured and
+ * the playground stays hidden.
+ */
+export function usePlaygroundStatus(): AzureStatus | undefined {
+  const [status, setStatus] = useState<AzureStatus>()
+
+  useEffect(() => {
+    let active = true
+    fetch('/api/chat/status')
+      .then((response) => response.json())
+      .then((value: AzureStatus) => {
+        if (active) setStatus(value)
+      })
+      .catch(() => {
+        if (active) setStatus({ configured: false, deployment: null })
+      })
+    return () => {
+      active = false
+    }
+  }, [])
+
+  return status
 }
 
 function newId() {
@@ -33,16 +59,9 @@ export function useAzureChat(systemPrompt: string) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [streaming, setStreaming] = useState(false)
   const [error, setError] = useState<string>()
-  const [status, setStatus] = useState<AzureStatus>()
   const controller = useRef<AbortController>(undefined)
 
-  useEffect(() => {
-    fetch('/api/chat/status')
-      .then((response) => response.json())
-      .then(setStatus)
-      .catch(() => setStatus({ configured: false, deployment: null }))
-    return () => controller.current?.abort()
-  }, [])
+  useEffect(() => () => controller.current?.abort(), [])
 
   const stop = useCallback(() => {
     controller.current?.abort()
@@ -113,5 +132,5 @@ export function useAzureChat(systemPrompt: string) {
     [messages, systemPrompt],
   )
 
-  return { messages, send, stop, reset, streaming, error, status }
+  return { messages, send, stop, reset, streaming, error }
 }
